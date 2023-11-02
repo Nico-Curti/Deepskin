@@ -15,7 +15,7 @@ Here's an example of a BibTeX entry:
 .. code-block:: latex
 
   @article{ijms24010706,
-    author = {Curti, Nico and Merli, Yuri and Zengarini, Corrado and Giampieri, Enrico and Merlotti, Alessandra and Dall’Olio, Daniele and Marcelli, Emanuela and Bianchi, Tommaso and Castellani, Gastone},
+    author = {Curti, Nico and Merli, Yuri and Zengarini, Corrado and Giampieri, Enrico and Merlotti, Alessandra and Dall'Olio, Daniele and Marcelli, Emanuela and Bianchi, Tommaso and Castellani, Gastone},
     title = {Effectiveness of Semi-Supervised Active Learning in Automated Wound Image Segmentation},
     journal = {International Journal of Molecular Sciences},
     volume = {24},

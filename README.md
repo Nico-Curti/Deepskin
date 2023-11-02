@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://github.com/Nico-Curti/Deepskin/blob/main/img/logo.png" width="90" height="90">
+  <img src="https://github.com/Nico-Curti/Deepskin/blob/main/img/logo.png" width="128" height="100">
   <br>
 </p>
 
 | **Authors**  | **Project** |  **Documentation** | **Build Status** | **License** |
 |:------------:|:-----------:|:------------------:|:----------------:|:-----------:|
-| [**N. Curti**](https://github.com/Nico-Curti) | **deepskin**<br/>[![International Journal of Molecular Science](https://www.mdpi.com/1422-0067/24/1/706)](https://www.mdpi.com/1422-0067/24/1/706) | **TODO** | [![Python](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml) | [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Nico-Curti/Deepskin/blob/main/LICENSE) |
+| [**N. Curti**](https://github.com/Nico-Curti) | **deepskin**<br>[![International Journal of Molecular Science](https://img.shields.io/badge/IJMS-1422_0067/24/1/706-g.svg)](https://www.mdpi.com/1422-0067/24/1/706) | **TODO**<br>[![Docs CI](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml) | [![Python](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml) | [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Nico-Curti/Deepskin/blob/main/LICENSE) |
 
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Nico-Curti/deepskin.svg?style=plastic)](https://github.com/Nico-Curti/Deepskin/pulls)
 [![GitHub issues](https://img.shields.io/github/issues/Nico-Curti/deepskin.svg?style=plastic)](https://github.com/Nico-Curti/Deepskin/issues)
@@ -114,7 +114,7 @@ If you have found `deepskin` helpful in your research, please consider citing th
 
 ```BibTex
 @article{ijms24010706,
-  author = {Curti, Nico and Merli, Yuri and Zengarini, Corrado and Giampieri, Enrico and Merlotti, Alessandra and Dall’Olio, Daniele and Marcelli, Emanuela and Bianchi, Tommaso and Castellani, Gastone},
+  author = {Curti, Nico and Merli, Yuri and Zengarini, Corrado and Giampieri, Enrico and Merlotti, Alessandra and Dall'Olio, Daniele and Marcelli, Emanuela and Bianchi, Tommaso and Castellani, Gastone},
   title = {Effectiveness of Semi-Supervised Active Learning in Automated Wound Image Segmentation},
   journal = {International Journal of Molecular Sciences},
   volume = {24},
