@@ -1,0 +1,46 @@
+name: deepskin Docs CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        git submodule update --init --recursive
+        python --version
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+        sudo apt install pandoc
+
+    - name: Install deepskin
+      run: |
+        python -m pip install .
+
+    - name: Install docs dependencies
+      run: |
+        python -m pip install -r docs/requirements.txt
+
+    - name: Build Python API
+      run: |
+        cd docs
+        make html
+        cd ..

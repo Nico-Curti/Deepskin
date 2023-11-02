@@ -1,0 +1,50 @@
+[project]
+name = 'deepskin'
+version = '0.0.1'
+authors = [
+  { name='Nico Curti', email='nico.curti2@unibo.it' },
+]
+description = 'Wound analysis using smartphone images.'
+readme = 'README.md'
+requires-python = '>=3.5'
+license = {text = "MIT"}
+keywords = [
+  'python',
+  'medical-imaging',
+  'wound',
+  'wound-healing',
+  'machine-learning',
+  'image-segmentation',
+  'image-processing',
+]
+maintainers = [
+  { name='Nico Curti', email='nico.curti2@unibo.it' },
+]
+classifiers = [
+  'Natural Language :: English',
+  'Operating System :: MacOS :: MacOS X',
+  'Operating System :: POSIX',
+  'Operating System :: POSIX :: Linux',
+  'Operating System :: Microsoft :: Windows',
+  'Programming Language :: Python',
+  'Programming Language :: Python :: 3',
+  'Programming Language :: Python :: 3.5',
+  'Programming Language :: Python :: 3.6',
+  'Programming Language :: Python :: 3.7',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: Implementation :: CPython',
+  'Programming Language :: Python :: Implementation :: PyPy'
+]
+
+[project.urls]
+'Homepage' = 'https://github.com/Nico-Curti/Deepskin'
+'Bug Tracker' = 'https://github.com/Nico-Curti/Deepskin/issues'
+
+[build-system]
+requires = [
+  'setuptools>=42',
+]
+build-backend = 'setuptools.build_meta'

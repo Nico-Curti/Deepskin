@@ -1,0 +1,5 @@
+numpy
+mahotas
+pandas
+opencv-python
+scikit-learn
