@@ -4,5 +4,8 @@ Python API
 .. toctree::
    :maxdepth: 4
 
-   TODO
+   imgproc
+   model
+   features
+   pwat
    

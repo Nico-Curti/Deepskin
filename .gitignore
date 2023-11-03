@@ -66,6 +66,7 @@ bin/
 build*/
 __pycache__/
 samples/
+checkpoints/
 
 # coverage
 .coverage

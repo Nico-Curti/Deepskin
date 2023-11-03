@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import json
+import os
+import cv2
 import argparse
 
+# package version
 from .__version__ import __version__
+# segmentation model for wound identification
+from .model import wound_segmentation
+# constant values
+from .constants import GREEN_COLOR_CODE
+from .constants import RED_COLOR_CODE
+from .constants import RESET_COLOR_CODE
 
 __author__  = ['Nico Curti']
 __email__ = ['nico.curti2@unibo.it']
@@ -38,27 +45,112 @@ def parse_args ():
     help='Get the current version installed',
   )
 
+  # input image filename
+  parser.add_argument(
+    '--input', '-i',
+    dest='filepath',
+    required=False,
+    action='store',
+    default=None,
+    type=str,
+    help=(
+      'Input filename or path on which load the image. '
+      'Ref https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html for the list of '
+      'supported formats. '
+    )
+  )
+
+  # deepskin --verbose
+  parser.add_argument(
+    '--verbose', '-w',
+    dest='verbose',
+    required=False,
+    action='store_true',
+    default=True,
+    help='Enable/Disable the code logging',
+  )
+
   args = parser.parse_args()
 
   return args
-
 
 def main ():
 
   # get the cmd parameters
   args = parse_args()
 
+  if args.verbose:
+    print(fr'''{GREEN_COLOR_CODE}
+     _                     _    _
+    | |                   | |  (_)
+  __| | ___  ___ _ __  ___| | ___ _ __
+ / _` |/ _ \/ _ \ '_ \/ __| |/ / | '_ \
+| (_| |  __/  __/ |_) \__ \   <| | | | |
+ \__,_|\___|\___| .__/|___/_|\_\_|_| |_|
+                | |
+                |_|
+      {RESET_COLOR_CODE}''',
+      end='\n',
+      flush=True,
+    )
+
   # results if version is required
   if args.version:
     # print it to stdout
     print(f'Deepskin package v{__version__}',
-      end='\n', file=sys.stdout, flush=True
+      end='\n', flush=True
     )
     # exit success
     exit(0)
 
-  # exit success
-  exit(0)
+  if args.filepath is None:
+    print(
+      f'{RED_COLOR_CODE}deepskin Error: the following arguments are required: --input/-i, --weight/-w{RESET_COLOR_CODE}',
+      end='\n',
+      flush=True,
+    )
+    exit(1)
+  elif not os.path.exists(args.filepath):
+    print((
+      f'{RED_COLOR_CODE}deepskin Error:{RESET_COLOR_CODE} input image file not found\n'
+      f'Given: {args.filepath}'
+      ),
+      end='\n',
+      flush=True,
+    )
+    exit(1)
+
+  if args.verbose:
+    print(f'Load the input image...',
+      end='',
+      flush=True,
+    )
+
+  # load the image using opencv
+  bgr = cv2.imread(args.filepath)
+  # convert the image from BGR to RGB fmt
+  rgb = bgr[..., ::-1]
+
+  if args.verbose:
+    print(f' {GREEN_COLOR_CODE}[DONE]{RESET_COLOR_CODE}',
+      end='\n',
+      flush=True
+    )
+
+  # get the wound segmentation mask
+  wound_mask = wound_segmentation(
+    img=rgb,
+    tol=0.5,
+    verbose=args.verbose,
+  )
+
+  # compute the wound PWAT
+  pwat = evaluate_PWAT_score(
+    img=rgb,
+    wound_mask=wound_mask,
+    verbose=args.verbose,
+  )
+
 
 if __name__ == '__main__':
 
