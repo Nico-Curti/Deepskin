@@ -10,6 +10,7 @@ import requests
 from zipfile import ZipFile
 from time import time as now
 
+import cv2
 import numpy as np
 import tensorflow as tf
 

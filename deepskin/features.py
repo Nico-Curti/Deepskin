@@ -271,10 +271,10 @@ def evaluate_features (img : np.ndarray,
   )
   # convert them to dict
   avg_rgb = {f'{prefix}avg{c}' : v
-    for c, v in zip(['R', 'G', 'B'], avg_rgb_w.ravel())
+    for c, v in zip(['R', 'G', 'B'], avg_rgb.ravel())
   }
   std_rgb = {f'{prefix}std{c}' : v
-    for c, v in zip(['R', 'G', 'B'], std_rgb_w.ravel())
+    for c, v in zip(['R', 'G', 'B'], std_rgb.ravel())
   }
 
   # get the HSV color space features
@@ -284,10 +284,10 @@ def evaluate_features (img : np.ndarray,
   )
   # convert them to dict
   avg_hsv = {f'{prefix}avg{c}' : v
-    for c, v in zip(['H', 'S', 'V'], avg_hsv_w.ravel())
+    for c, v in zip(['H', 'S', 'V'], avg_hsv.ravel())
   }
   std_hsv = {f'{prefix}std{c}' : v
-    for c, v in zip(['H', 'S', 'V'], std_hsv_w.ravel())
+    for c, v in zip(['H', 'S', 'V'], std_hsv.ravel())
   }
 
   # get the Lab color space features
@@ -297,10 +297,10 @@ def evaluate_features (img : np.ndarray,
   )
   # convert them to dict
   avg_lab = {f'{prefix}avg{c}' : v
-    for c, v in zip(['L', 'a', 'b'], avg_lab_w.ravel())
+    for c, v in zip(['L', 'a', 'b'], avg_lab.ravel())
   }
   std_lab = {f'{prefix}std{c}' : v
-    for c, v in zip(['L', 'a', 'b'], std_lab_w.ravel())
+    for c, v in zip(['L', 'a', 'b'], std_lab.ravel())
   }
 
   # get the Park redness feature

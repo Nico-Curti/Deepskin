@@ -13,6 +13,8 @@ from .model import wound_segmentation
 from .constants import GREEN_COLOR_CODE
 from .constants import RED_COLOR_CODE
 from .constants import RESET_COLOR_CODE
+# pwat evaluation function
+from .pwat import evaluate_PWAT_score
 
 __author__  = ['Nico Curti']
 __email__ = ['nico.curti2@unibo.it']
