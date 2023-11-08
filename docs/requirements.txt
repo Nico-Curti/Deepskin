@@ -3,4 +3,5 @@ sphinx-rtd-theme
 sphinxcontrib-napoleon
 sphinxcontrib-programoutput
 nbsphinx==0.8.7
-IPython
+ipykernel
+ipython

@@ -32,7 +32,6 @@ def parse_args ():
     add_help=True,
     prefix_chars='-',
     allow_abbrev=True,
-    exit_on_error=True,
     description=description,
     epilog=f'Deepskin Python package v{__version__}'
   )
