@@ -38,6 +38,15 @@ Official implementation of the deepskin algorithm published on [International Jo
 * [Acknowledgment](#acknowledgment)
 * [Citation](#citation)
 
+### :tada: Important updates :tada
+
+With the new version of the Deepskin dataset, we improved the segmentation model providing the possibility to perform a multi-class semantic segmentation!
+Using the `deepskin` package you can directly use the latest version of the model, obtaining for each image a semantic segmentation according to the following classes:
+
+* ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) wound ROI
+* ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) patient body ROI
+* ![#1589F0](https://placehold.co/15x15/1589F0/1589F0.png) background ROI
+
 ## Overview
 
 The `deepskin` package aims to propose a fully automated pipeline for the wound-image processing
@@ -135,7 +144,7 @@ A complete list of beginner-examples for the build of a custom `deepskin` pipeli
 For sake of completeness, a simple `deepskin` pipeline could be obtained by the following snippet:
 
 ```python
-from deepskin import deepskin_model
+from deepskin import wound_segmentation
 from deepskin import evaluate_PWAT_score
 
 # load the image in any OpenCV supported fmt

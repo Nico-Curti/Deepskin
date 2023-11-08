@@ -84,3 +84,4 @@ __version__.py
 # img
 img/logo_hr.png
 img/*.pptx
+docs/source/notebooks/**/*.png

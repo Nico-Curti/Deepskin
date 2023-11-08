@@ -2,3 +2,10 @@ setup.py
 deepskin/__init__.py
 deepskin/__version__.py
 deepskin/__main__.py
+deepskin/checkpoints.py
+deepskin/constants.py
+deepskin/features.py
+deepskin/imgproc.py
+deepskin/model.py
+deepskin/pwat.py
+deepskin/segmentation.py

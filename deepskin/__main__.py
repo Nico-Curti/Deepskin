@@ -72,6 +72,26 @@ def parse_args ():
     help='Enable/Disable the code logging',
   )
 
+  # deepskin --mask
+  parser.add_argument(
+    '--mask', '-m',
+    dest='mask',
+    required=False,
+    action='store_true',
+    default=False,
+    help='Evaluate the semantic segmentation mask using the Deepskin model; the resulting mask will be saved to a png file in the same location of the input file',
+  )
+
+  # deepskin --pwat
+  parser.add_argument(
+    '--pwat', '-p',
+    dest='pwat',
+    required=False,
+    action='store_true',
+    default=False,
+    help='Compute the PWAT score of the given wound-image',
+  )
+
   args = parser.parse_args()
 
   return args
@@ -139,19 +159,38 @@ def main ():
       flush=True
     )
 
-  # get the wound segmentation mask
-  wound_mask = wound_segmentation(
-    img=rgb,
-    tol=0.5,
-    verbose=args.verbose,
-  )
+  if args.mask or args.pwat:
+    # get the semantic segmentation mask
+    mask = wound_segmentation(
+      img=rgb,
+      tol=0.5,
+      verbose=args.verbose,
+    )
+    # dump the resulting mask to file
 
-  # compute the wound PWAT
-  pwat = evaluate_PWAT_score(
-    img=rgb,
-    wound_mask=wound_mask,
-    verbose=args.verbose,
-  )
+    # get the output directory
+    outdir = os.path.dirname(args.filepath)
+    # get the filename
+    name = os.path.basename(args.filepath)
+    # remove extension
+    name, _ = os.path.splitext(name)
+    # build the output filename
+    outfile = f'{outdir}/{name}_deepskin_mask.png'
+    # dump the mask
+    cv2.imwrite(outfile, mask)
+
+  if args.pwat:
+    # compute the wound PWAT
+    pwat = evaluate_PWAT_score(
+      img=rgb,
+      mask=mask,
+      verbose=args.verbose,
+    )
+
+    print(f'{GREEN_COLOR_CODE}PWAT prediction: {pwat:.3f}{RESET_COLOR_CODE}',
+      end='\n',
+      flush=True,
+    )
 
 
 if __name__ == '__main__':

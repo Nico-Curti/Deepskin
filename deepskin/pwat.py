@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cv2
 import numpy as np # just for typehints
 from time import time as now
 
 # image pre/post processing algorithms
+from .imgproc import imfill
 from .imgproc import get_perilesion_mask
 # image feature functions
 from .features import evaluate_features
@@ -26,7 +28,8 @@ __all__ = [
 
 
 def evaluate_PWAT_score (img : np.ndarray,
-                         wound_mask : np.ndarray,
+                         mask : np.ndarray,
+                         ksize : tuple = (20, 20),
                          verbose : bool = False
                          ) -> float :
   '''
@@ -38,8 +41,11 @@ def evaluate_PWAT_score (img : np.ndarray,
     img : np.ndarray
       Input image to analyze in RGB fmt
 
-    wound_mask : np.ndarray
-      Wound mask to consider for the feature extraction step
+    mask : np.ndarray
+      Semantic mask of the image
+
+    ksize : tuple
+      Kernel dimension for the mask processing
 
     verbose : bool (default := False)
       Enable/Disable the logging of the steps
@@ -57,10 +63,20 @@ def evaluate_PWAT_score (img : np.ndarray,
       end='',
       flush=True,
     )
+
+  # un-pack the semantic mask into its components
+  wound_mask, body_mask, bg_mask = cv2.split(mask)
+
   # get the peri-wound mask
   periwound_mask = get_perilesion_mask(
     mask=wound_mask,
-    ksize=(20, 20),
+    ksize=ksize,
+  )
+  # correct the peri-wound mask according to the body
+  periwound_mask = cv2.bitwise_and(
+    periwound_mask,
+    periwound_mask,
+    mask=imfill(body_mask | wound_mask)
   )
 
   if verbose:
@@ -93,22 +109,22 @@ def evaluate_PWAT_score (img : np.ndarray,
     )
 
   # standardize the wound features
-  wound_features = {k : (v - Deepskin_CENTER[k]) / Deepskin_SCALE[k]
+  wound_features = {k : (v - Deepskin_CENTER.get(k, 0.0)) / Deepskin_SCALE.get(k, 1.0)
     for k, v in wound_features.items()
   }
 
   # standardize the peri-wound features
-  periwound_features = {k : (v - Deepskin_CENTER[k]) / Deepskin_SCALE[k]
+  periwound_features = {k : (v - Deepskin_CENTER.get(k, 0.0)) / Deepskin_SCALE.get(k, 1.0)
     for k, v in periwound_features.items()
   }
 
   # evaluate the PWAT contribution of the wound
-  pwat_wound = sum([v * Deepskin_PWAT_PARAMS[k]
+  pwat_wound = sum([v * Deepskin_PWAT_PARAMS.get(k, 0.0)
     for k, v in wound_features.items()
   ])
 
   # evaluate the PWAT contribution of the peri-wound
-  pwat_periwound = sum([v * Deepskin_PWAT_PARAMS[k]
+  pwat_periwound = sum([v * Deepskin_PWAT_PARAMS.get(k, 0.0)
     for k, v in periwound_features.items()
   ])
 
@@ -118,7 +134,7 @@ def evaluate_PWAT_score (img : np.ndarray,
   toc = now()
 
   if verbose:
-    print(f'{CRLF}{step} {GREEN_COLOR_CODE}[DONE]{RESET_COLOR_CODE}  ({toc - tic:.3f} sec)',
+    print(f'{CRLF}{step} {GREEN_COLOR_CODE}[DONE]{RESET_COLOR_CODE}  ({toc - tic:.3f} sec)                              ',
       end='\n',
       flush=True,
     )

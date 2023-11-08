@@ -18,13 +18,13 @@ def imfill (img : np.ndarray) -> np.ndarray:
 
   Parameters
   ----------
-  img : np.ndarray
-    Image to fill in GRAYSCALE
+    img : np.ndarray
+      Image to fill in GRAYSCALE
 
   Returns
   -------
-  filled : array-like
-    filled image
+    filled : array-like
+      filled image
   '''
   # Copy the thresholded image.
   img = np.pad(
@@ -55,16 +55,16 @@ def get_perilesion_mask (mask : np.ndarray,
 
   Parameters
   ----------
-  mask : np.ndarray
-    Input wound mask in GRAYSCALE
+    mask : np.ndarray
+      Input wound mask in GRAYSCALE
 
-  ksize : tuple
-    Kernel dimension for the mask processing
+    ksize : tuple
+      Kernel dimension for the mask processing
 
   Returns
   -------
-  periwound_mask : np.ndarray
-    Peri-lesion mask of the wound
+    periwound_mask : np.ndarray
+      Peri-lesion mask of the wound
   '''
   # define a circular kernel with a big radius
   kernel = cv2.getStructuringElement(

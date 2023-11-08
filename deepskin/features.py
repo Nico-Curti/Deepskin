@@ -260,7 +260,7 @@ def evaluate_features (img : np.ndarray,
   # get the Haralick features
   haralick = get_haralick(masked).ravel()
   # convert them to dict
-  haralick_w = {f'{prefix}haralick{i:d}' : v
+  haralick = {f'{prefix}haralick{i:d}' : v
     for i, v in enumerate(haralick)
   }
 
