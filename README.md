@@ -122,7 +122,7 @@ The full list of available flags for the customization of the command line could
 
 ```bash
 $ deepskin --help
-usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose]
+usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose] [--mask] [--pwat]
 
 deepskin library - Wound analysis using smartphone images
 
@@ -133,6 +133,9 @@ optional arguments:
                         Input filename or path on which load the image. Ref
                         https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html for the list of supported formats.
   --verbose, -w         Enable/Disable the code logging
+  --mask, -m            Evaluate the semantic segmentation mask using the Deepskin model; the resulting mask will be
+                        saved to a png file in the same location of the input file
+  --pwat, -p            Compute the PWAT score of the given wound-image
 
 Deepskin Python package v0.0.1
 ```

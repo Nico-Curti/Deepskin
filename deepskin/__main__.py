@@ -8,7 +8,7 @@ import argparse
 # package version
 from .__version__ import __version__
 # segmentation model for wound identification
-from .model import wound_segmentation
+from .segmentation import wound_segmentation
 # constant values
 from .constants import GREEN_COLOR_CODE
 from .constants import RED_COLOR_CODE

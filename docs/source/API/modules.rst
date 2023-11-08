@@ -6,6 +6,7 @@ Python API
 
    imgproc
    model
+   segmentation
    features
    pwat
    
