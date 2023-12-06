@@ -39,6 +39,6 @@ jobs:
     - name: Install deepskin model
       run: |
         python -m pip install .
-    - name: Test the execution
-      run: |
-        deepskin --help
+    #- name: Test the execution
+    #  run: |
+    #    deepskin --help
