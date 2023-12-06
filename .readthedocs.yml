@@ -28,8 +28,3 @@ python:
   install:
     - requirements: requirements.txt
     - requirements: docs/requirements.txt
-    - method: setuptools
-      path: .
-
-conda:
-  environment: environment.yml
