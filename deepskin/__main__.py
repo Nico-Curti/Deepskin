@@ -56,8 +56,8 @@ def parse_args ():
     type=str,
     help=(
       'Input filename or path on which load the image. '
-      'Ref https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html for the list of '
-      'supported formats. '
+      'Ref https://docs.opencv.org/4.x/d4/da8/group__imgcodecs.html '
+      'for the list of supported formats. '
     )
   )
 
@@ -78,7 +78,11 @@ def parse_args ():
     required=False,
     action='store_true',
     default=False,
-    help='Evaluate the semantic segmentation mask using the Deepskin model; the resulting mask will be saved to a png file in the same location of the input file',
+    help=(
+      'Evaluate the semantic segmentation mask using the Deepskin model; '
+      'the resulting mask will be saved to a png file in the same location '
+      'of the input file',
+    )
   )
 
   # deepskin --pwat
@@ -148,7 +152,7 @@ def main ():
     )
 
   # load the image using opencv
-  bgr = cv2.imread(args.filepath)
+  bgr = cv2.imread(args.filepath, cv2.IMREAD_COLOR)
   # convert the image from BGR to RGB fmt
   rgb = bgr[..., ::-1]
 
@@ -175,8 +179,8 @@ def main ():
     name, _ = os.path.splitext(name)
     # build the output filename
     outfile = f'{outdir}/{name}_deepskin_mask.png'
-    # dump the mask
-    cv2.imwrite(outfile, mask)
+    # dump the mask in BGR fmt
+    cv2.imwrite(outfile, mask[..., ::-1])
 
   if args.pwat:
     # compute the wound PWAT

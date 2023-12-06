@@ -38,7 +38,7 @@ Official implementation of the deepskin algorithm published on [International Jo
 * [Acknowledgment](#acknowledgment)
 * [Citation](#citation)
 
-### :tada: Important updates :tada
+### :tada: Important updates :tada:
 
 With the new version of the Deepskin dataset, we improved the segmentation model providing the possibility to perform a multi-class semantic segmentation!
 Using the `deepskin` package you can directly use the latest version of the model, obtaining for each image a semantic segmentation according to the following classes:
