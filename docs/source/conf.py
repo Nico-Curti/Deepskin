@@ -73,3 +73,4 @@ nbsphinx_input_prompt = 'In [%s]:'
 nbsphinx_kernel_name = 'python3'
 nbsphinx_output_prompt = 'Out[%s]:'
 nbsphinx_allow_errors = True
+nbsphinx_execute = 'never'
