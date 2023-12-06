@@ -81,7 +81,7 @@ def parse_args ():
     help=(
       'Evaluate the semantic segmentation mask using the Deepskin model; '
       'the resulting mask will be saved to a png file in the same location '
-      'of the input file',
+      'of the input file'
     )
   )
 
