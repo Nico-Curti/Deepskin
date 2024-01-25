@@ -1,4 +1,4 @@
-sphinx==4.1.2
+sphinx>=5.0
 sphinx-rtd-theme
 sphinxcontrib-napoleon
 sphinxcontrib-programoutput
