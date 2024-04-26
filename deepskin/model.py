@@ -136,6 +136,18 @@ def deepskin_model (verbose : bool = False) -> tf.keras.Model :
     include_top=False,
     input_shape=(IMG_SIZE, IMG_SIZE, 3),
   )
+  # v2.8.0
+  if int(tf.__version__.replace('.', '')) > 284:
+    # in TF version greater than 2.8.4 there is an
+    # extra-layer in the pre-processing head of the model
+    # which perform an true-division rescaling of the
+    # input. To keep the retro-compatibility with the
+    # TF version used during the training of the model, we
+    # need to skip this step, replacing it with a simple
+    # dummy function.
+    # TODO: exclude this check and re-train the model with
+    # newer version of TF (!)
+    encoder.layers[3].function = lambda x, y : x
 
   # get the feature layers
   layers = [
