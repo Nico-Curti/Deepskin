@@ -23,7 +23,7 @@
 
 ## Wound analysis using smartphone images
 
-Official implementation of the deepskin algorithm published on [International Journal of Molecular Science](https://www.mdpi.com/1422-0067/24/1/706) by Curti et al. [![International Journal of Molecular Science](https://img.shields.io/badge/IJMS-1422_0067/24/1/706-g.svg)](https://www.mdpi.com/1422-0067/24/1/706)
+Official implementation of the deepskin algorithm published on [International Journal of Molecular Science](https://www.mdpi.com/1422-0067/24/1/706) by Curti et al. [![International Journal of Molecular Science](https://img.shields.io/badge/IJMS-1422_0067/24/1/706-g.svg)](https://www.mdpi.com/1422-0067/24/1/706) and used in [![Journal of Medical Systems](https://img.shields.io/badge/JMS-10.1007/s10916/023/02029/9-g.svg)](https://link.springer.com/article/10.1007/s10916-023-02029-9)
 
 * [Overview](#overview)
 * [Prerequisites](#prerequisites)
@@ -191,6 +191,34 @@ See [here](https://github.com/Nico-Curti/Deepskin/blob/main/.github/CONTRIBUTING
 
 ## FAQ
 
+* <details>
+    <summary>
+      <b>
+        I'm working with tensorflow `v2.16.1` (or later) and the model produces incorrect segmentations
+      </b>
+    </summary>
+    <p>
+
+    If you are working with `tensorflow` versions higher than `2.16.1`, the default Keras version used by the model is `Keras 3`, as indicated in the release documentation (ref. [here](https://blog.tensorflow.org/2024/03/whats-new-in-tensorflow-216.html)).
+    The original deepskin model was trained with lower versions of `tensorflow` (and, therefore, with lower version of `Keras`).
+    Therefore, there could be problems related to backward compatibility of packages which can lead to very strange segmentation results: an example is reported and discussed in the [issue](https://github.com/Nico-Curti/Deepskin/issues/2) which reported this error.
+    A possible solution to solve this issue is to force the use of the legacy version of Keras, adding an extra line at the **beginning** of your scripts:
+
+    ```python
+    import os
+    os.environ['TF_USE_LEGACY_KERAS'] = '1'
+    from deepskin import wound_segmentation
+    ```
+
+    This way, before importing tensorflow package via the deepskin module, the environment variable sets the version of Keras to be used by the model.
+
+    **NOTE:** Newer versions of tensorflow are optimized to use the latest versions of Keras, so there may be a loss of efficiency during the prediction!
+
+    **NOTE 2:** Incorrect segmentation could be obtained even with images very far from the data used during the model training, so the Keras version couldn't be the answer to all your problems...
+
+    </p>
+  </details>
+
 :construction: **WORK IN PROGRESS** :construction:
 
 ## Authors
@@ -227,6 +255,26 @@ If you have found `deepskin` helpful in your research, please consider citing th
   issn = {1422-0067},
   abstract = {Appropriate wound management shortens the healing times and reduces the management costs, benefiting the patient in physical terms and potentially reducing the healthcare system&rsquo;s economic burden. Among the instrumental measurement methods, the image analysis of a wound area is becoming one of the cornerstones of chronic ulcer management. Our study aim is to develop a solid AI method based on a convolutional neural network to segment the wounds efficiently to make the work of the physician more efficient, and subsequently, to lay the foundations for the further development of more in-depth analyses of ulcer characteristics. In this work, we introduce a fully automated model for identifying and segmenting wound areas which can completely automatize the clinical wound severity assessment starting from images acquired from smartphones. This method is based on an active semi-supervised learning training of a convolutional neural network model. In our work, we tested the robustness of our method against a wide range of natural images acquired in different light conditions and image expositions. We collected the images using an ad hoc developed app and saved them in a database which we then used for AI training. We then tested different CNN architectures to develop a balanced model, which we finally validated with a public dataset. We used a dataset of images acquired during clinical practice and built an annotated wound image dataset consisting of 1564 ulcer images from 474 patients. Only a small part of this large amount of data was manually annotated by experts (ground truth). A multi-step, active, semi-supervised training procedure was applied to improve the segmentation performances of the model. The developed training strategy mimics a continuous learning approach and provides a viable alternative for further medical applications. We tested the efficiency of our model against other public datasets, proving its robustness. The efficiency of the transfer learning showed that after less than 50 epochs, the model achieved a stable DSC that was greater than 0.95. The proposed active semi-supervised learning strategy could allow us to obtain an efficient segmentation method, thereby facilitating the work of the clinician by reducing their working times to achieve the measurements. Finally, the robustness of our pipeline confirms its possible usage in clinical practice as a reliable decision support system for clinicians.},
   doi = {10.3390/ijms24010706}
+}
+```
+
+or the related work about automated PWAT estimation
+
+```BibTex
+@article{Curti2024,
+  author = {Curti, Nico and Merli, Yuri and Zengarini, Corrado and Starace, Michela and Rapparini, Luca and Marcelli, Emanuela and Carlini, Gianluca and Buschi, Daniele and Castellani, Gastone C. and Piraccini, Bianca Maria and Bianchi, Tommaso and Giampieri, Enrico},
+  title = {Automated Prediction of Photographic Wound Assessment Tool in Chronic Wound Images},
+  journal = {Journal of Medical Systems},
+  year = {2024},
+  month = {Jan},
+  day = {16},
+  volume = {48},
+  number = {1},
+  pages = {14},
+  abstract = {Many automated approaches have been proposed in literature to quantify clinically relevant wound features based on image processing analysis, aiming at removing human subjectivity and accelerate clinical practice. In this work we present a fully automated image processing pipeline leveraging deep learning and a large wound segmentation dataset to perform wound detection and following prediction of the Photographic Wound Assessment Tool (PWAT), automatizing the clinical judgement of the adequate wound healing. Starting from images acquired by smartphone cameras, a series of textural and morphological features are extracted from the wound areas, aiming to mimic the typical clinical considerations for wound assessment. The resulting extracted features can be easily interpreted by the clinician and allow a quantitative estimation of the PWAT scores. The features extracted from the region-of-interests detected by our pre-trained neural network model correctly predict the PWAT scale values with a Spearman's correlation coefficient of 0.85 on a set of unseen images. The obtained results agree with the current state-of-the-art and provide a benchmark for future artificial intelligence applications in this research field.},
+  issn = {1573-689X},
+  doi = {10.1007/s10916-023-02029-9},
+  url = {https://doi.org/10.1007/s10916-023-02029-9}
 }
 ```
 
