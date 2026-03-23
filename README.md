@@ -122,7 +122,7 @@ The full list of available flags for the customization of the command line could
 
 ```bash
 $ deepskin --help
-usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose] [--mask] [--pwat]
+usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose] [--mask] [--mask-format {labels,onehot,rgb,mask}] [--report REPORT_PATH] [--pwat]
 
 deepskin library - Wound analysis using smartphone images
 
@@ -135,6 +135,12 @@ optional arguments:
   --verbose, -w         Enable/Disable the code logging
   --mask, -m            Evaluate the semantic segmentation mask using the Deepskin model; the resulting mask will be
                         saved to a png file in the same location of the input file
+  --mask-format {labels,onehot,rgb,mask}
+                        Output format for the segmentation mask. labels: 2D integer label map (0=background, 1=body,
+                        2=wound); onehot: 3-channel one-hot encoded mask; rgb: RGB color map for visualization; mask:
+                        3-channel binary mask (default, compatible with PWAT)
+  --report REPORT_PATH  Export segmentation analysis report to JSON file. The report includes pixel counts, area
+                        ratios, wound bbox, and confidence scores.
   --pwat, -p            Compute the PWAT score of the given wound-image
 
 Deepskin Python package v0.0.1
@@ -147,6 +153,7 @@ A complete list of beginner-examples for the build of a custom `deepskin` pipeli
 For sake of completeness, a simple `deepskin` pipeline could be obtained by the following snippet:
 
 ```python
+import cv2
 from deepskin import wound_segmentation
 from deepskin import evaluate_PWAT_score
 
@@ -157,9 +164,44 @@ rgb = bgr[..., ::-1]
 # get the wound segmentation mask
 wound_mask = wound_segmentation(img=rgb)
 # compute the wound PWAT
-pwat = evaluate_PWAT_score(img=rgb, wound_mask=wound_mask)
+pwat = evaluate_PWAT_score(img=rgb, mask=wound_mask)
 # display the results
 print(f'PWAT score: {pwat:.3f}')
+```
+
+#### Advanced Usage with Multiple Output Formats
+
+The `wound_segmentation_advanced` function provides more control over the output format and generates detailed analysis reports:
+
+```python
+import cv2
+from deepskin import wound_segmentation_advanced
+
+# load the image
+bgr = cv2.imread('/path/to/picture.png')
+rgb = bgr[..., ::-1]
+
+# perform segmentation with different output formats
+result = wound_segmentation_advanced(
+    img=rgb,
+    output_format='labels',  # 'labels', 'onehot', 'rgb', or 'mask'
+    verbose=True
+)
+
+# access results
+label_map = result['label_map']      # 2D integer label map
+mask = result['mask']                 # formatted according to output_format
+report = result['report']             # SegmentationReport object
+
+# export analysis report to JSON
+report.save('segmentation_report.json')
+
+# or get report as dictionary
+data = report.generate()
+print(f"Wound detected: {data['wound_detected']}")
+print(f"Wound area ratio: {data['area_ratios']['wound']:.4f}")
+if 'wound_bbox' in data:
+    print(f"Wound bbox: {data['wound_bbox']}")
 ```
 
 ## Table of contents

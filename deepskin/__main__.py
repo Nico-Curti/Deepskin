@@ -8,7 +8,7 @@ import argparse
 # package version
 from .__version__ import __version__
 # segmentation model for wound identification
-from .segmentation import wound_segmentation
+from .segmentation import wound_segmentation, wound_segmentation_advanced
 # constant values
 from .constants import GREEN_COLOR_CODE
 from .constants import RED_COLOR_CODE
@@ -85,6 +85,39 @@ def parse_args ():
     )
   )
 
+  # deepskin --mask-format
+  parser.add_argument(
+    '--mask-format',
+    dest='mask_format',
+    required=False,
+    action='store',
+    default='mask',
+    type=str,
+    choices=['labels', 'onehot', 'rgb', 'mask'],
+    help=(
+      'Output format for the segmentation mask. '
+      'labels: 2D integer label map (0=background, 1=body, 2=wound); '
+      'onehot: 3-channel one-hot encoded mask; '
+      'rgb: RGB color map for visualization; '
+      'mask: 3-channel binary mask (default, compatible with PWAT)'
+    )
+  )
+
+  # deepskin --report
+  parser.add_argument(
+    '--report',
+    dest='report_path',
+    required=False,
+    action='store',
+    default=None,
+    type=str,
+    help=(
+      'Export segmentation analysis report to JSON file. '
+      'The report includes pixel counts, area ratios, wound bbox, '
+      'and confidence scores.'
+    )
+  )
+
   # deepskin --pwat
   parser.add_argument(
     '--pwat', '-p',
@@ -98,6 +131,22 @@ def parse_args ():
   args = parser.parse_args()
 
   return args
+
+def save_mask(mask, filepath, mask_format):
+  '''
+  保存mask到文件，根据格式选择合适的保存方式
+  '''
+  if mask_format == 'labels':
+    # 对于labels格式，保存为PNG（16位以支持更多类别）
+    if mask.dtype != np.uint8 and mask.dtype != np.uint16:
+      mask = mask.astype(np.uint16)
+    cv2.imwrite(filepath, mask)
+  elif mask_format == 'rgb':
+    # RGB格式直接保存（BGR for OpenCV）
+    cv2.imwrite(filepath, mask[..., ::-1])
+  else:
+    # onehot和mask格式保存为PNG
+    cv2.imwrite(filepath, mask[..., ::-1])
 
 def main ():
 
@@ -130,7 +179,7 @@ def main ():
 
   if args.filepath is None:
     print(
-      f'{RED_COLOR_CODE}deepskin Error: the following arguments are required: --input/-i, --weight/-w{RESET_COLOR_CODE}',
+      f'{RED_COLOR_CODE}deepskin Error: the following arguments are required: --input/-i{RESET_COLOR_CODE}',
       end='\n',
       flush=True,
     )
@@ -162,31 +211,86 @@ def main ():
       flush=True
     )
 
-  if args.mask or args.pwat:
-    # get the semantic segmentation mask
-    mask = wound_segmentation(
+  # 使用高级分割函数获取更完整的结果
+  if args.mask or args.pwat or args.report_path:
+    # 使用新的高级分割函数
+    result = wound_segmentation_advanced(
       img=rgb,
       tol=0.5,
+      output_format=args.mask_format,
       verbose=args.verbose,
     )
-    # dump the resulting mask to file
+    mask = result['mask']
+    report = result['report']
 
-    # get the output directory
-    outdir = os.path.dirname(args.filepath)
-    # get the filename
-    name = os.path.basename(args.filepath)
-    # remove extension
-    name, _ = os.path.splitext(name)
-    # build the output filename
-    outfile = f'{outdir}/{name}_deepskin_mask.png'
-    # dump the mask in BGR fmt
-    cv2.imwrite(outfile, mask[..., ::-1])
+    # dump the resulting mask to file
+    if args.mask:
+      # get the output directory
+      outdir = os.path.dirname(args.filepath)
+      # get the filename
+      name = os.path.basename(args.filepath)
+      # remove extension
+      name, _ = os.path.splitext(name)
+
+      # 根据格式确定文件扩展名
+      if args.mask_format == 'labels':
+        ext = '_labels.png'
+      elif args.mask_format == 'onehot':
+        ext = '_onehot.png'
+      elif args.mask_format == 'rgb':
+        ext = '_rgb.png'
+      else:
+        ext = '_mask.png'
+
+      # build the output filename
+      outfile = os.path.join(outdir, f'{name}_deepskin{ext}')
+
+      # save mask according to format
+      if args.mask_format == 'labels':
+        cv2.imwrite(outfile, mask)
+      else:
+        cv2.imwrite(outfile, mask[..., ::-1])
+
+      if args.verbose:
+        print(f'Mask saved to: {outfile}')
+
+    # 导出JSON报告
+    if args.report_path:
+      report.save(args.report_path)
+      if args.verbose:
+        print(f'Report saved to: {args.report_path}')
+
+    # 打印报告摘要到控制台
+    if args.verbose and args.report_path:
+      report_data = report.generate()
+      print(f'\nSegmentation Summary:')
+      print(f'  - Image shape: {report_data["image_shape"]}')
+      print(f'  - Wound detected: {report_data["wound_detected"]}')
+      print(f'  - Pixel counts: {report_data["pixel_counts"]}')
+      print(f'  - Area ratios: {report_data["area_ratios"]}')
+      if 'wound_bbox' in report_data:
+        print(f'  - Wound bbox: {report_data["wound_bbox"]}')
+      if 'wound_confidence' in report_data:
+        print(f'  - Wound confidence: {report_data["wound_confidence"]:.4f}')
 
   if args.pwat:
+    # 对于PWAT，需要使用兼容的mask格式
+    if args.mask_format != 'mask':
+      # 重新获取标准mask格式用于PWAT计算
+      standard_result = wound_segmentation_advanced(
+        img=rgb,
+        tol=0.5,
+        output_format='mask',
+        verbose=False,
+      )
+      mask_for_pwat = standard_result['mask']
+    else:
+      mask_for_pwat = mask
+
     # compute the wound PWAT
     pwat = evaluate_PWAT_score(
       img=rgb,
-      mask=mask,
+      mask=mask_for_pwat,
       verbose=args.verbose,
     )
 
@@ -197,5 +301,4 @@ def main ():
 
 
 if __name__ == '__main__':
-
   main ()
