@@ -10,6 +10,10 @@ from .model import MODEL_CHECKPOINT
 from .checkpoints import download_model_weights
 # import the wound segmentation algorithm
 from .segmentation import wound_segmentation
+from .segmentation import seg_to_labels
+from .segmentation import seg_to_onehot
+from .segmentation import seg_to_rgb_mask
+from .segmentation import generate_analysis_report
 # import the features for the wound monitoring
 from .features import evaluate_features
 # import the PWAT evaluator for the wound scoring

@@ -1,0 +1,33 @@
+{
+  "image_size": {
+    "height": 224,
+    "width": 224
+  },
+  "total_pixels": 50176,
+  "classes": {
+    "background": {
+      "pixel_count": 4634,
+      "area_percentage": 9.235491071428571,
+      "mean_confidence": 0.9751606583595276
+    },
+    "body": {
+      "pixel_count": 5709,
+      "area_percentage": 11.377949617346939,
+      "mean_confidence": 0.9799427390098572
+    },
+    "wound": {
+      "pixel_count": 39833,
+      "area_percentage": 79.38655931122449,
+      "mean_confidence": 0.9979782700538635
+    }
+  },
+  "has_wound": true,
+  "wound_bbox": {
+    "x_min": 0,
+    "y_min": 0,
+    "x_max": 223,
+    "y_max": 223,
+    "width": 224,
+    "height": 224
+  }
+}

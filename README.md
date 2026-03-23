@@ -122,7 +122,8 @@ The full list of available flags for the customization of the command line could
 
 ```bash
 $ deepskin --help
-usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose] [--mask] [--pwat]
+usage: deepskin [-h] [--version] [--input FILEPATH] [--verbose] [--mask]
+                [--mask-format {labels,rgb,onehot}] [--pwat] [--report REPORT]
 
 deepskin library - Wound analysis using smartphone images
 
@@ -135,9 +136,30 @@ optional arguments:
   --verbose, -w         Enable/Disable the code logging
   --mask, -m            Evaluate the semantic segmentation mask using the Deepskin model; the resulting mask will be
                         saved to a png file in the same location of the input file
+  --mask-format {labels,rgb,onehot}
+                        Output mask format: labels: 2D integer label map (0=background, 1=body, 2=wound), rgb: RGB
+                        color mask for visualization, onehot: 3-channel binary mask compatible with PWAT calculation
   --pwat, -p            Compute the PWAT score of the given wound-image
+  --report REPORT       Path to save the analysis report in JSON format. The report includes pixel counts, area
+                        percentages, wound bbox, etc.
 
 Deepskin Python package v0.0.1
+```
+
+### CLI 使用示例
+
+```bash
+# 1. 生成labels格式的分割掩码并保存分析报告
+deepskin --input /path/to/image.png --mask --mask-format labels --report report.json
+
+# 2. 生成RGB可视化掩码并计算PWAT分数
+deepskin --input /path/to/image.png --mask --mask-format rgb --pwat
+
+# 3. 仅生成分析报告（不保存mask）
+deepskin --input /path/to/image.png --report analysis.json
+
+# 4. 完整流程：分割（onehot格式）+ PWAT计算 + 分析报告
+deepskin --input /path/to/image.png --mask --mask-format onehot --pwat --report full_report.json
 ```
 
 ### Python script
@@ -147,18 +169,41 @@ A complete list of beginner-examples for the build of a custom `deepskin` pipeli
 For sake of completeness, a simple `deepskin` pipeline could be obtained by the following snippet:
 
 ```python
-from deepskin import wound_segmentation
-from deepskin import evaluate_PWAT_score
+import cv2
+import json
+from deepskin import (
+    wound_segmentation,
+    evaluate_PWAT_score,
+    seg_to_labels,
+    seg_to_rgb_mask,
+    generate_analysis_report
+)
 
 # load the image in any OpenCV supported fmt
 bgr = cv2.imread('/path/to/picture.png')
 # convert the image from BGR to RGB fmt
 rgb = bgr[..., ::-1]
-# get the wound segmentation mask
-wound_mask = wound_segmentation(img=rgb)
-# compute the wound PWAT
-pwat = evaluate_PWAT_score(img=rgb, wound_mask=wound_mask)
-# display the results
+
+# 获取分割结果: 返回原始softmax输出和兼容格式的mask
+seg_raw, seg_mask = wound_segmentation(img=rgb, return_raw=True)
+
+# 1. 使用单标签语义分割（每个像素属于一个类别）
+labels = seg_to_labels(seg_raw)  # 二维整数标签图: 0=background, 1=body, 2=wound
+
+# 2. 生成不同格式的输出
+rgb_mask = seg_to_rgb_mask(labels)  # RGB彩色掩码用于可视化
+
+# 3. 生成分析报告
+report = generate_analysis_report(seg_raw, labels)
+print(f"检测到伤口: {report['has_wound']}")
+print(f"伤口面积占比: {report['classes']['wound']['area_percentage']:.2f}%")
+
+# 4. 保存报告到JSON文件
+with open('report.json', 'w') as f:
+    json.dump(report, f, indent=2)
+
+# 5. 计算PWAT分数（与现有API完全兼容）
+pwat = evaluate_PWAT_score(img=rgb, mask=seg_mask)
 print(f'PWAT score: {pwat:.3f}')
 ```
 
