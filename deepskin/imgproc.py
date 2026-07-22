@@ -17,6 +17,8 @@ __all__ = [
   '_triangle_area',
   '_filter_valid_triangles',
   '_get_zcoord',
+  '_get_pixel_boundaries',
+  'rectify_boundary_mask',
 ]
 
 
@@ -294,3 +296,191 @@ def _get_zcoord (xy : list, depth : np.ndarray) -> np.ndarray :
     for (fl_x, fl_y), (cl_x, cl_y) in zip(fl, cl)
   ]
   return z
+
+def _get_pixel_boundaries (img : np.ndarray, mask : np.ndarray) -> np.ndarray:
+  '''
+  Extract pixels belonging to mask edges
+  
+  Parameters
+  ----------
+  img : np.ndarray
+    Input image in any 3-channel format
+  
+  mask : np.ndarray
+    Mask from which extract the contours
+      
+  Returns
+  -------
+  pixels : np.ndarray
+    Array of pixels reshaped as (-1, 1, 3) as row for a putative image
+  '''
+  # get the mask contours
+  cnt, _ = cv2.findContours(
+    image=mask, 
+    mode=cv2.RETR_EXTERNAL, 
+    method=cv2.CHAIN_APPROX_NONE
+  )
+  # extract the longest one
+  # (safety check)
+  cnt = max(cnt, key=len)
+  # reshape it
+  cnt = np.squeeze(cnt)
+  # get the corresponding pixels
+  pixels = np.swapaxes(
+    img, 
+    axis1=0, 
+    axis2=1
+  )
+  # extract the contour points
+  pixels = pixels[tuple(cnt.T)]
+  # re-organize the array in a matrix fmt
+  pixels = np.expand_dims(
+    pixels, 
+    axis=1
+  )
+  
+  return pixels
+
+def rectify_boundary_mask (
+      img : np.ndarray, 
+      mask : np.ndarray, 
+      iterations : int = 1
+  ) -> np.ndarray:
+  '''
+  Image rectification stacking a series
+  of concentric dilations & erosions of
+  the mask boundaries.
+  The obtained rectified image will 
+  contain the internal representation
+  on the TOP of the image and the external
+  one on the BOTTOM.
+  The number of dilations and erosions
+  performed (for a correct indexing of the
+  resulting image) are returned alongside
+  the rectified image
+  
+  Parameters
+  ----------
+  img : np.ndarray
+    Input image in any format
+  
+  mask : np.ndarray
+    Mask from which extract the contours
+  
+  iterations : int
+    Maximum number of dilations/erosions 
+    to perform
+  
+  Returns
+  -------
+  rectify_img : np.ndarray
+    Image obtained by the rectification of 
+    the extracted contours
+  
+  (Ndilation, Nerosion) : tuple
+      Counters of the transformation performed
+  '''    
+  # get the initial contour
+  pxl1 = _get_pixel_boundaries(img, mask)
+  # get the mask shape
+  h, w, *_ = pxl1.shape
+  # stack it as first element of the dilation
+  dilations = [pxl1]
+  
+  # fix the kernel of the processing
+  kernel = cv2.getStructuringElement(
+    shape=cv2.MORPH_ELLIPSE, 
+    ksize=(3, 3)
+  )
+
+  # store a copy of the original mask
+  temp = mask.copy()
+  
+  # count the number of dilations will be
+  # performed
+  # NOTE: if other constraints are inserted
+  # in the next for loop, this counter could
+  # be used to keep track of usefull infos
+  # about the processing
+  Ndilation = 1
+  # run a series of dilations, starting every
+  # time from the original image and increasing
+  # at each time the number of transformations
+  for i in range(iterations):
+    # apply a dilation and update the
+    # temporary copy
+    temp = cv2.dilate(
+      src=temp, 
+      kernel=kernel, 
+      iterations=1
+    )
+    # get the pixel of these new contours
+    pxl = _get_pixel_boundaries(img, temp)
+    # resize the contour pixels to the
+    # size of the original image for a
+    # correct stacking at the end
+    pxl = cv2.resize(
+      pxl, 
+      dsize=(w, h), 
+      interpolation=cv2.INTER_CUBIC
+    )
+    # collect all the dilations
+    dilations.append(pxl)
+  # update the dilation counter
+  Ndilation = i
+  
+  # restart from the original mask
+  temp = mask.copy()
+  
+  # create an erosion container
+  erosions = []
+  # count the number of erosions will be
+  # performed
+  # NOTE: if other constraints are inserted
+  # in the next for loop, this counter could
+  # be used to keep track of usefull infos
+  # about the processing 
+  Nerosion = 1
+  # run a series of erosions, starting every
+  # time from the original image and increasing
+  # at each time the number of transformations
+  for i in range(iterations):
+    # apply an erosion and update the
+    # temporary copy
+    temp = cv2.erode(
+      src=temp, 
+      kernel=kernel, 
+      iterations=1
+    )
+
+    # check if there are multiple components
+    # NOTE: if the internal mask is split, 
+    # the application of further erosions could
+    # lead to discontinuity in the final stack
+    ncomp, _ = cv2.connectedComponents(temp)
+    if ncomp > 2:
+      break
+    
+    # get the pixel of these new contours
+    pxl = _get_pixel_boundaries(img, temp)
+    # resize the contour pixels to the
+    # size of the original image for a
+    # correct stacking at the end
+    pxl = cv2.resize(
+      pxl, 
+      dsize=(w, h), 
+      interpolation=cv2.INTER_CUBIC
+    )
+    # collect all the erosions
+    erosions.append(pxl)
+  # update the erosion counter
+  Nerosion = i
+  
+  # stack all the images into a final
+  # rectified version of the mask
+  # NOTE: the order of the erosion is inverted
+  # to preserve the correct orientation of the
+  # contours
+  rectify_img = np.hstack(erosions[::-1] + dilations)
+  
+  return rectify_img, (Ndilation, Nerosion)

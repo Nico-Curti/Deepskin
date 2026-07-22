@@ -85,3 +85,6 @@ __version__.py
 img/logo_hr.png
 img/*.pptx
 docs/source/notebooks/**/*.png
+
+# VS code
+debug.log

@@ -9,3 +9,5 @@ Examples
   ./notebooks/deepskin.ipynb
   ./notebooks/deepskin_assl.ipynb
   ./notebooks/deepskin_pwat.ipynb
+  ./notebooks/deepskin_area.ipynb
+  ./notebooks/deepskin_edge.ipynb
