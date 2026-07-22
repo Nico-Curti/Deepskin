@@ -76,13 +76,13 @@ def wound_segmentation (img : np.ndarray,
     local,
     '..',
     'checkpoints',
-    'efficientnetb3_deepskin_semantic.h5'
+    'efficientnetb3_deepskin_semantic_gray.h5'
   )
   # if the weights file does not exists
   if not os.path.exists(weightspath):
     download_model_weights(
       Id=MODEL_CHECKPOINT,
-      model_name = 'efficientnetb3_deepskin_semantic'
+      model_name='efficientnetb3_deepskin_semantic_gray'
     )
 
   # load the weights

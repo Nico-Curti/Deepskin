@@ -4,6 +4,7 @@
 import os
 # download model weights
 import gdown
+import shutil
 from zipfile import ZipFile
 
 # constant values
@@ -59,8 +60,10 @@ def download_model_weights (Id : str, model_name : str):
   local = os.path.dirname(os.path.abspath(__file__))
   outdir = os.path.join(local, '..', 'checkpoints')
   os.makedirs(outdir, exist_ok=True)
-
-  os.rename(f'{model_name}.h5', os.path.join(outdir, f'{model_name}.h5'))
+  # I use move to ensure the correct cross-link
+  # between putative different file-systems
+  # (e.g from WSL to Windows paths)
+  shutil.move(f'{model_name}.h5', os.path.join(outdir, f'{model_name}.h5'))
   os.remove(f'{model_name}.zip')
 
   return

@@ -5,7 +5,7 @@
 
 | **Authors**  | **Project** |  **Documentation** | **Build Status** | **License** |
 |:------------:|:-----------:|:------------------:|:----------------:|:-----------:|
-| [**N. Curti**](https://github.com/Nico-Curti) | **deepskin**<br>[![International Journal of Molecular Science](https://img.shields.io/badge/IJMS-1422_0067/24/1/706-g.svg)](https://www.mdpi.com/1422-0067/24/1/706) | [![Documentation Status](https://readthedocs.org/projects/deepskin/badge/?version=latest)](https://deepskin.readthedocs.io/en/latest/?badge=latest)<br>[![Docs CI](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml) | [![Python](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml) | [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Nico-Curti/Deepskin/blob/main/LICENSE) |
+| [**N. Curti**](https://github.com/Nico-Curti) | **deepskin**<br>[![International Journal of Molecular Science](https://img.shields.io/badge/IJMS-1422_0067/24/1/706-g.svg)](https://www.mdpi.com/1422-0067/24/1/706) | [![Documentation Status](https://readthedocs.org/projects/deepskin/badge/?version=latest)](https://deepskin.readthedocs.io/en/latest/?badge=latest)<br>[![Docs CI](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/docs.yml) | [![Python](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml/badge.svg)](https://github.com/Nico-Curti/Deepskin/actions/workflows/python.yml) | [![license](https://img.shields.io/crates/l/MIT)](https://github.com/Nico-Curti/Deepskin/blob/main/LICENSE) |
 
 [![GitHub pull-requests](https://img.shields.io/github/issues-pr/Nico-Curti/deepskin.svg?style=plastic)](https://github.com/Nico-Curti/Deepskin/pulls)
 [![GitHub issues](https://img.shields.io/github/issues/Nico-Curti/deepskin.svg?style=plastic)](https://github.com/Nico-Curti/Deepskin/issues)
@@ -38,14 +38,17 @@ Official implementation of the deepskin algorithm published on [International Jo
 * [Acknowledgment](#acknowledgment)
 * [Citation](#citation)
 
-### :tada: Important updates :tada:
+### :tada: Important updates 18/11/24 :tada:
 
 With the new version of the Deepskin dataset, we improved the segmentation model providing the possibility to perform a multi-class semantic segmentation!
 Using the `deepskin` package you can directly use the latest version of the model, obtaining for each image a semantic segmentation according to the following classes:
 
-* ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) wound ROI
+* ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) background ROI
 * ![#c5f015](https://placehold.co/15x15/c5f015/c5f015.png) patient body ROI
-* ![#1589F0](https://placehold.co/15x15/1589F0/1589F0.png) background ROI
+* ![#f0f015](https://placehold.co/15x15/f0f015/f0f015.png) marker ROI
+* ![#1589F0](https://placehold.co/15x15/1589F0/1589F0.png) wound ROI
+
+where the marker object must be a circular shape with the green color (ref. [here](https://github.com/Nico-Curti/Deepskin/blob/main/docs/source/notebooks/deepskin_wound_area.ipynb))
 
 ## Overview
 
@@ -155,9 +158,9 @@ bgr = cv2.imread('/path/to/picture.png')
 # convert the image from BGR to RGB fmt
 rgb = bgr[..., ::-1]
 # get the wound segmentation mask
-wound_mask = wound_segmentation(img=rgb)
+semantic_mask = wound_segmentation(img=rgb)
 # compute the wound PWAT
-pwat = evaluate_PWAT_score(img=rgb, wound_mask=wound_mask)
+pwat = evaluate_PWAT_score(img=rgb, mask=semantic_mask)
 # display the results
 print(f'PWAT score: {pwat:.3f}')
 ```

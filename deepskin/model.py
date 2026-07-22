@@ -171,7 +171,7 @@ def deepskin_model (verbose : bool = False) -> tf.keras.Model :
   )
 
   x = tf.keras.layers.Conv2D(
-    filters=3,
+    filters=4,
     kernel_size=(1, 1),
     padding='same',
     name='final_conv',

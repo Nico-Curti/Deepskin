@@ -1,4 +1,5 @@
 numpy
+scipy
 mahotas
 opencv-python
 tensorflow>=2.8.0

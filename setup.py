@@ -44,7 +44,7 @@ PACKAGE_NAME = 'deepskin'
 AUTHOR = 'Nico Curti'
 EMAIL = 'nico.curti2@unibo.it'
 REQUIRES_PYTHON = '>=3.5'
-PACKAGE_VERSION = '0.0.1'
+PACKAGE_VERSION = '0.0.2'
 DESCRIPTION = 'Wound analysis using smartphone images'
 URL = 'https://github.com/Nico-Curti/Deepskin'
 MAINTAINER = AUTHOR

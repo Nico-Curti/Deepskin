@@ -23,7 +23,7 @@ __author__  = ['Nico Curti']
 __email__ = ['nico.curti2@unibo.it']
 
 __all__ = [
-  'evaluate_PWAT_score'
+  'evaluate_PWAT_score',
 ]
 
 
@@ -65,7 +65,7 @@ def evaluate_PWAT_score (img : np.ndarray,
     )
 
   # un-pack the semantic mask into its components
-  wound_mask, body_mask, bg_mask = cv2.split(mask)
+  bg_mask, body_mask, marker_mask, wound_mask = cv2.split(mask)
 
   # get the peri-wound mask
   periwound_mask = get_perilesion_mask(

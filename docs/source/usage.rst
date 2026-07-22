@@ -54,5 +54,5 @@ For sake of completeness, a simple `deepskin` pipeline could be obtained by the 
   # display the results
   print(f'PWAT score: {pwat:.3f}')
 
-.. _here: https://github.com/Nico-Curti/graphomics/blob/main/examples
-.. _notebooks: https://github.com/Nico-Curti/graphomics/blob/main/docs/source/notebooks
+.. _here: https://github.com/Nico-Curti/Deepskin/blob/main/examples
+.. _notebooks: https://github.com/Nico-Curti/Deepskin/blob/main/docs/source/notebooks

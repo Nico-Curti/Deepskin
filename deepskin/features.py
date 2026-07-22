@@ -34,6 +34,8 @@ def get_haralick (masked : np.ndarray) -> np.ndarray :
       shape=(13, ),
       dtype=np.float32
     )
+  # convert the image to grayscale
+  masked_gray = cv2.cvtColor(masked, cv2.COLOR_RGB2GRAY)
   # compute the Haralick features
   h_feature = mh.features.haralick(
     masked,

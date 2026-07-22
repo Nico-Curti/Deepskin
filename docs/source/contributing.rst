@@ -49,7 +49,6 @@ can be processed as quickly as possible
 - Submit a Pull Request into `dev`
   (following the pull request template_).
 
-
 Merging
 -------
 
@@ -59,7 +58,6 @@ Merging
 - Make sure you got credits at the end of merge: we have a lot of project
   to follow and we may forget to add your name to the list of authors.
   Please, do not hesitate to remind us!
-
 
 .. _issue: https://github.com/Nico-Curti/Deepskin/blob/main/.github/ISSUE_TEMPLATE/ISSUE_TEMPLATE.md
 .. _`pull request`: https://github.com/Nico-Curti/Deepskin/blob/main/.github/PULL_REQUEST_TEMPLATE/PULL_REQUEST_TEMPLATE.md
